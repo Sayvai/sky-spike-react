@@ -1,0 +1,33 @@
+$default-color = #fff
+$mute-color = #ccc
+
+.header {
+	border-bottom: 1px solid $default-color;
+	padding: 1em;
+	background-color: #000;
+	color: $default-color;
+
+	h1 {
+		margin-top: 0;
+	}
+
+	ul {
+		list-style: none;
+		padding: 0;
+		margin-bottom: 0;
+
+		li {
+			display: inline-block;
+			padding-right: 1em;
+
+			a {
+				color: $mute-color;
+				text-decoration: none;
+
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+		}
+	}
+}
