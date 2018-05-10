@@ -7,6 +7,6 @@ import { createAction } from '../helpers/redux';
  * @param {Object} data collection data
  * @returns {Object}
  */
-export function saveCollection(data) {
-  return createAction(actionTypes.SAVE_COLLECTION, data.items);
+export function updateItems(data) {
+  return createAction(actionTypes.UPDATE_ITEMS, data);
 }

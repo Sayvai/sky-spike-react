@@ -1,7 +1,5 @@
 import { connect } from 'react-redux';
-import { dragdropActions } from '../actions/dragdrop-actions';
-import { dragdropActionTypes } from '../actions/types/dragdrop-action-types';
-import { createAction } from '../helpers/redux';
+import * as dragdropActions from '../actions/dragdrop-actions';
 
 import Dragdrop from '../components/dragdrop/Dragdrop';
 
@@ -13,9 +11,8 @@ const mapStateToProps = state => (
 
 const mapDispatchToProps = dispatch => (
   {
-    onSave: (evt) => {
-      evt.preventDefault();
-      dispatch(dragdropActions.saveCollection(evt));
+    onItemsChanged: (evt) => {
+      dispatch(dragdropActions.updateItems(evt));
     }
   }
 );

@@ -1,9 +1,25 @@
 $default-color = #fff
 $shadow-color = #222
 
-.dragdrop {
+.dragdrop_component {
   background-color: $shadow-color;
 	color: $default-color;
 	flex: 1;
 	padding: 1em;
+}
+
+.dragdrop_library_component {
+	display: flex;
+	flex-direction: row;
+}
+
+.dragdrop_library_component_lists {
+	padding: 8px;
+	width: 50%;
+}
+
+.dragdrop_library_component_item {
+	userSelect: 'none';
+	padding: 16px;
+	margin: 0 0 8px 0;
 }
