@@ -20,6 +20,8 @@ ReactDOM.render(
   document.getElementById('app')
 );
 
-module.hot.accept('./components/App', () => {
-  setTimeout(render);
-});
+if (module.hot) {
+  module.hot.accept('./components/App', () => {
+    setTimeout(render);
+  });
+}
