@@ -1,12 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './packShot.styl';
-import Constants from '../../../constants';
+import * as constants from '../../../constants';
 import { DragSource, DropTarget } from 'react-dnd';
 
 class PackShot extends React.Component {
   constructor(props) {
     super(props);
+  }
+
+  getPackshotType() {
+    return this.props.packshotType;
   }
 
   render() {
@@ -36,12 +40,14 @@ const itemSpec = {
 
 const itemSpecDrop = {
   drop(props, monitor, component) {
+    const dragSourceType = monitor.getItemType();
     const draggedItem = monitor.getItem();
     const dragIndex = draggedItem.positionIndex;
     const hoverIndex = props.positionIndex;
+    const dropTargetType = props.packshotType;
 
-    console.log('dragIndex: ', dragIndex);
-    console.log('hoverIndex: ', hoverIndex);
+    console.log('packshotDragIndex: ', dragIndex);
+    console.log('packshotHoverIndex: ', hoverIndex);
 
     // Don't replace items with themselves
     if (dragIndex === hoverIndex) {
@@ -74,9 +80,16 @@ const itemSpecDrop = {
       return;
     }*/
     
-    console.log('ABOUT TO TRIGGER reorderItem()!');
-    // Time to actually perform the action
-    props.onReorderItem({dragIndex, hoverIndex});
+    console.log('Packshot: ABOUT TO TRIGGER reorderItem()!');
+    // Re-order items only, from within the collections box
+    if (props.onReorderItem && dragSourceType === constants.PACKSHOT.PACKSHOT_ITEM_COLLECTION) {
+      props.onReorderItem({dragIndex, hoverIndex});
+    }
+
+    // Add the dragged results items into the 
+    if (dragSourceType === constants.PACKSHOT.PACKSHOT_ITEM_RESULT && dragSourceType !== dropTargetType) {
+      props.onAddItemsToCollection({ item: draggedItem, hoverIndex });
+    }
 
     // Note: we're mutating the monitor item here!
     // Generally it's better to avoid mutations,
@@ -109,8 +122,12 @@ PackShot.propTypes = {
   isDragging: PropTypes.bool.isRequired,
   forbidDrag: PropTypes.bool,
   onReorderItem: PropTypes.func,
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
+  packshotType: PropTypes.string,
+  onAddItemsToCollection: PropTypes.func
 };
 
-export default DragSource(Constants.PACKSHOT, itemSpec, collect)(
-  DropTarget(Constants.PACKSHOT, itemSpecDrop, collectDrop)(PackShot));
+export default DragSource((props) => {
+  return props.packshotType;
+}, itemSpec, collect)(
+  DropTarget([constants.PACKSHOT.PACKSHOT_ITEM_COLLECTION, constants.PACKSHOT.PACKSHOT_ITEM_RESULT], itemSpecDrop, collectDrop)(PackShot));

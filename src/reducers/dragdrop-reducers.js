@@ -1,6 +1,8 @@
 import { createReducer } from '../helpers/redux';
 import * as dataHelpers from  '../helpers/data';
 import appActionTypes from '../actions/types/dragdrop-action-types';
+import * as Constants from '../constants';
+import { addItemsToCollectionSet } from '../helpers/data/manipulator';
 
 /**
  * The initial app state
@@ -9,11 +11,11 @@ import appActionTypes from '../actions/types/dragdrop-action-types';
 const initialState = {
   collectionType: 'Static Collection',
   resultsItems: {
-    id: 'resultsItems',
+    id: Constants.ITEMS_BOX_RESULTS,
     items: dataHelpers.generatePackshots(1, 10)
   },
   collectionItems: {
-    id: 'collectionItems',
+    id: Constants.ITEMS_BOX_COLLECTION,
     items: dataHelpers.generatePackshots(11, 15)
   }
 };
@@ -48,14 +50,31 @@ export default createReducer(initialState, {
     };
   },
   [appActionTypes.SELECT_ITEM]: (state, payload) => {
-    const items = dataHelpers.clone(state.collectionItems.items);
+    const items = dataHelpers.clone(state[payload.itemSource].items);
 
     return {
       ...state,
-      collectionItems: {
-        ...state.collectionItems,
+      [payload.itemSource]: {
+        ...state[payload.itemSource],
         items: dataHelpers.toggleItemSelection(items, payload.itemId)
       }
+    };
+  },
+  [appActionTypes.RESET_ITEMS_SELECTIONS]: (state, payload) => {
+    const items = dataHelpers.clone(state[payload.id].items);
+
+    return {
+      ...state,
+      [payload.id]: {
+        ...state[payload.id],
+        items: dataHelpers.resetItemsSelections(items)
+      }
+    };
+  },
+  [appActionTypes.ADD_ITEMS_TO_COLLECTION]: (state, payload) => {
+    return {
+      ...state,
+      ...addItemsToCollectionSet(state.resultsItems, state.collectionItems, payload.dropOffsetIndex)
     };
   }
 });

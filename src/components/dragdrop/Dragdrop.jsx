@@ -18,11 +18,15 @@ class Dragdrop extends React.Component {
         <section>
           <SourceBox
             items={this.props.data.resultsItems.items}
+            onSelectItem={this.props.onSelectItem}
+            onResetItemsSelection={this.props.onResetItemsSelection}
           />
           <TargetBox
             items={this.props.data.collectionItems.items}
             onReorderItem={this.props.onReorderCollectionItems}
             onSelectItem={this.props.onSelectItem}
+            onResetItemsSelection={this.props.onResetItemsSelection}
+            onAddItemsToCollection={this.props.onAddItemsToCollection}
           />
         </section>
       </div>
@@ -34,6 +38,8 @@ Dragdrop.propTypes = {
   onItemsChanged: PropTypes.func.isRequired,
   onReorderCollectionItems: PropTypes.func,
   onSelectItem: PropTypes.func,
+  onResetItemsSelection: PropTypes.func,
+  onAddItemsToCollection: PropTypes.func,
   data: PropTypes.shape({
     collectionType: PropTypes.string,
     collectionItems: PropTypes.object,
