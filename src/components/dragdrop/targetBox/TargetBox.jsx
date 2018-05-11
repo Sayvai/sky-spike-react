@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './targetBox.styl';
-import Constants from '../../../constants';
+import * as constants from '../../../constants';
 import { DropTarget } from 'react-dnd';
 import PackShot from '../packShot/PackShot';
 
@@ -19,7 +19,12 @@ class TargetBox extends React.Component {
    */
   selectItem(item) {
     this.props.onSelectItem({
-      itemId: item.id
+      itemId: item.id,
+      itemSource: constants.ITEMS.ITEMS_BOX_COLLECTION
+    });
+
+    this.props.onResetItemsSelection({
+      itemSetId: constants.ITEMS.ITEMS_BOX_RESULTS
     });
   }
 
@@ -31,6 +36,8 @@ class TargetBox extends React.Component {
         positionIndex={item.positionIndex}
         onReorderItem={this.props.onReorderItem}
         onClick={this.selectItem.bind(this, item)}
+        packshotType={constants.PACKSHOT.PACKSHOT_ITEM_COLLECTION}
+        onAddItemsToCollection={this.props.onAddItemsToCollection}
       ></PackShot>
     );
 
@@ -43,10 +50,35 @@ class TargetBox extends React.Component {
   }
 }
 
-const squareTarget = {
+const dropTarget = {
   drop(props, monitor) {
-    console.log('squareTarget drop props: ', props);
-    console.log('squareTarget drop monitor: ', monitor.getItem());
+    console.log('dropTarget drop props: ', props);
+    console.log('dropTarget drop monitor: ', monitor.getItem());
+
+    const dragSourceType = monitor.getItemType();
+    const draggedItem = monitor.getItem();
+    const dragIndex = draggedItem.positionIndex;
+    const hoverIndex = props.positionIndex;
+    const dropTargetType = props.packshotType;
+
+    console.log('packshotDragIndex: ', dragIndex);
+    console.log('packshotHoverIndex: ', hoverIndex);
+
+    // Don't replace items with themselves
+    //if (dragIndex === hoverIndex) {
+    //  return;
+    //}
+
+    console.log('Target: ABOUT TO TRIGGER reorderItem()!');
+    // Re-order items only, from within the collections box
+    if (props.onReorderItem && dragSourceType === constants.PACKSHOT.PACKSHOT_ITEM_COLLECTION) {
+      props.onReorderItem({dragIndex, hoverIndex});
+    }
+
+    // Add the dragged results items into the collection (target) box
+    if (dragSourceType === constants.PACKSHOT.PACKSHOT_ITEM_RESULT && dragSourceType !== dropTargetType) {
+      props.onAddItemsToCollection({ item: draggedItem, hoverIndex });
+    }
   }
 };
 
@@ -61,7 +93,9 @@ TargetBox.propTypes = {
   items: PropTypes.array,
   connectDropTarget: PropTypes.func.isRequired,
   onReorderItem: PropTypes.func,
-  onSelectItem: PropTypes.func
+  onSelectItem: PropTypes.func,
+  onResetItemsSelection: PropTypes.func,
+  onAddItemsToCollection: PropTypes.func
 };
 
-export default DropTarget(Constants.PACKSHOT, squareTarget, collect)(TargetBox);
+export default DropTarget([constants.PACKSHOT.PACKSHOT_ITEM_COLLECTION, constants.PACKSHOT.PACKSHOT_ITEM_RESULT], dropTarget, collect)(TargetBox);

@@ -32,7 +32,11 @@ export function reorderArrayItems(list, startIndex, endIndex) {
   } else {
     let [removed] = items.splice(startIndex, 1);
 
-    items.splice(endIndex, 0, removed);
+    if (endIndex) {
+      items.splice(endIndex, 0, removed);
+    } else {
+      items = items.concat(removed);
+    }
   }
 
   // Reset position position indexes
@@ -77,4 +81,52 @@ export function toggleItemSelection(items, id) {
 
     return item;
   });
+}
+
+/**
+ * Resets the selected flag on all items
+ * @param {Array} items
+ * @returns {Array}
+ */
+export function resetItemsSelections(items) {
+  return items.map(item => {
+    return {
+      ...item,
+      selected: false
+    };
+  });
+}
+
+/**
+ * Transfers the selected results over to the collection item at a target index
+ * @param {Object} resultsItems
+ * @param {Object} collectionItems
+ * @param {Number} dropOffsetIndex
+ * @return {Object}
+ */
+export function addItemsToCollectionSet(resultsItems, collectionItems, dropOffsetIndex) {
+  const selectedResultsItems = resultsItems.items.filter(item => item.selected);
+  let newResultsItems = resultsItems.items.filter(item => !item.selected);
+  let collectionItemsCopy = Array.from(collectionItems.items);
+
+  if (isNaN(dropOffsetIndex)) {
+    // append new items to end of collection items
+    collectionItemsCopy = collectionItemsCopy.concat(selectedResultsItems);
+  } else {
+    collectionItemsCopy.splice(dropOffsetIndex, 0, ...selectedResultsItems);
+  }
+
+  newResultsItems = resetPositionIndexes(newResultsItems);
+  collectionItemsCopy = resetPositionIndexes(collectionItemsCopy);
+
+  return {
+    resultsItems: {
+      id: resultsItems.id,
+      items: newResultsItems
+    },
+    collectionItems: {
+      id: collectionItems.id,
+      items: collectionItemsCopy
+    }
+  };
 }

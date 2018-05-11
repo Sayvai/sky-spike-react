@@ -3,5 +3,6 @@ export {
   reorderArrayItems,
   moveDragDropItems,
   clone,
-  toggleItemSelection
+  toggleItemSelection,
+  resetItemsSelections
 } from './manipulator';

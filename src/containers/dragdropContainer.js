@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import * as dragdropActions from '../../actions/dragdrop-actions';
-import styles from './dragdrop.styl';
+import * as dragdropActions from '../actions/dragdrop-actions';
+import styles from './dragdropContainer.styl';
 
-import Dragdrop from '../../components/dragdrop/Dragdrop';
+import Dragdrop from '../components/dragdrop/Dragdrop';
 
 class DragDropContainer extends React.Component {
   constructor(props) {
