@@ -1,9 +1,32 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { dragdropActions } from '../actions/dragdrop-actions';
-import { dragdropActionTypes } from '../actions/types/dragdrop-action-types';
-import { createAction } from '../helpers/redux';
+import * as dragdropActions from '../actions/dragdrop-actions';
+import styles from './dragdropContainer.styl';
 
 import Dragdrop from '../components/dragdrop/Dragdrop';
+
+class DragDropContainer extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <div className={styles.dragdropContainer}>
+        <h2>Feature - Drag and Drop</h2>
+        <p>{ this.props.dragdropData.collectionType }</p>
+        <p>Build your feature component here...</p>
+        <Dragdrop
+          data={this.props.dragdropData}
+          onItemsChanged={this.props.onItemsChanged}
+          onReorderCollectionItems={this.props.onReorderCollectionItems}
+          onSelectItem={this.props.onItemSelected}
+        />
+      </div>
+    );
+  }
+}
 
 const mapStateToProps = state => (
   {
@@ -13,16 +36,28 @@ const mapStateToProps = state => (
 
 const mapDispatchToProps = dispatch => (
   {
-    onSave: (evt) => {
-      evt.preventDefault();
-      dispatch(dragdropActions.saveCollection(evt));
+    onItemsChanged: evt => {
+      dispatch(dragdropActions.updateItems(evt));
+    },
+    onReorderCollectionItems: evt => {
+      dispatch(dragdropActions.reorderCollectionItem({
+        originalIndex: evt.dragIndex,
+        newIndex: evt.hoverIndex
+      }));
+    },
+    onItemSelected: evt => {
+      dispatch(dragdropActions.selectItem({
+        itemId: evt.itemId
+      }));
     }
   }
 );
 
-const DragdropContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Dragdrop);
+DragDropContainer.propTypes = {
+  onItemsChanged: PropTypes.func.isRequired,
+  onReorderCollectionItems: PropTypes.func,
+  onItemSelected: PropTypes.func,
+  dragdropData: PropTypes.object
+};
 
-export default DragdropContainer;
+export default connect(mapStateToProps, mapDispatchToProps)(DragDropContainer);

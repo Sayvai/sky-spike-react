@@ -1,27 +1,44 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './dragdrop.styl';
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
+import SourceBox from './sourceBox/SourceBox';
+import TargetBox from './targetBox/TargetBox';
 
-const Dragdrop = ({ dragdropData , onSave}) => {
-  return (
-    <div className={styles.dragdrop}>
-      <h2>Feature - Drag and Drop</h2>
-      <p>{ dragdropData.collectionType }</p>
-      <p>Build your feature component here...</p>
-    </div>
-  );
-};
+class Dragdrop extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <div className={styles.dragdrop}>
+        <p>I am THE drag drop component</p>
+        <section>
+          <SourceBox
+            items={this.props.data.resultsItems.items}
+          />
+          <TargetBox
+            items={this.props.data.collectionItems.items}
+            onReorderItem={this.props.onReorderCollectionItems}
+            onSelectItem={this.props.onSelectItem}
+          />
+        </section>
+      </div>
+    );
+  }
+}
 
 Dragdrop.propTypes = {
-  onSave: PropTypes.func.isRequired,
-  dragdropData: PropTypes.shape({
+  onItemsChanged: PropTypes.func.isRequired,
+  onReorderCollectionItems: PropTypes.func,
+  onSelectItem: PropTypes.func,
+  data: PropTypes.shape({
     collectionType: PropTypes.string,
-    collectionItems: PropTypes.array,
-  }),
+    collectionItems: PropTypes.object,
+    resultsItems: PropTypes.object
+  })
 };
 
-Dragdrop.defaultProps = {
-  dragdropData: PropTypes.object,
-};
-
-export default Dragdrop;
+export default DragDropContext(HTML5Backend)(Dragdrop);
