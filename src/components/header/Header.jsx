@@ -8,6 +8,7 @@ function Header() {
       <h1>Sky Spike - React</h1>
       <ul>
         <li><Link to="/">Home</Link></li>
+        <li><Link to="/form">Form</Link></li>
         <li><Link to="/dragdrop">Drag and Drop</Link></li>
       </ul>
     </header>

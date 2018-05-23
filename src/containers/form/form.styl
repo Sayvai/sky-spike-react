@@ -1,0 +1,50 @@
+$default-color = #fff;
+$shadow-color = #222;
+$gap = 1.25rem;
+$font-size = 1.15rem;
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 1rem;
+  background-color: $shadow-color;
+	color: $default-color;
+  font-size: $font-size;
+
+  >* {
+    flex-basis: 50%;
+    margin-bottom: $gap;
+    padding: $gap;
+
+    input:not([type='checkbox']), select {
+      width: 100%;
+      display block;
+      margin-top: .625rem;
+    }
+    input[type='checkbox'] {
+      margin-left: $gap;
+    }
+  }
+}
+
+input[type="text"] {
+  border: 0;
+  outline: 0;
+  border-bottom: 1px solid #666;
+  background: none;
+  color: inherit;
+  font-size: $font-size * 1.5;
+}
+
+input[type='checkbox'] {
+  height: $gap;
+}
+
+select {
+  background-color: none;
+  color: white;
+}
+
+.select-selected {
+  background-color: DodgerBlue;
+}
