@@ -6,10 +6,18 @@ import { Provider } from 'react-redux';
 import reducers from './reducers';
 import App from './App';
 
+// Logger with default options
+import { createLogger } from 'redux-logger';
+
+const logger = createLogger({
+  collapsed: true
+});
+
 const store = createStore(
   reducers,
   applyMiddleware(
     thunkMiddleware, // lets us dispatch() functions
+    logger
   ),
 );
 
