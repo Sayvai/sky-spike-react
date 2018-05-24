@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getData } from '../../actions/form-actions';
+import { getData, send } from '../../actions/form-actions';
 import styles from './form.styl';
-import Button from '@material-ui/core/Button';
+import { Button, Input, Select, Checkbox } from '@material-ui/core';
 
 const FORM_FIELD_TYPES = {
   TEXT: 'STRING',
@@ -14,7 +14,7 @@ const FORM_FIELD_TYPES = {
 export class Form extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { formData: {}};
   }
 
   componentDidMount() {
@@ -26,46 +26,67 @@ export class Form extends React.Component {
   }
 
   handleSubmit = event => {
-    alert('A name was submitted: ' + this.state);
     event.preventDefault();
+
+    this.props.sendFormData(this.state.formData);
   }
 
   render() {
-    let fieldList = this.props.fields.map(field => {
-      let controller;
-      switch (field.datagramValueType) {
-        case FORM_FIELD_TYPES.SELECT:
-          controller = (
-            <select type='checkbox' name={field.name} value={this.state[field.name]} onChange={this.handleChange}>
-              {field.options.map(option => <option key={option} value={option}>{option}</option>)}
-            </select>
-          );
-          break;
-
-        case FORM_FIELD_TYPES.BOOLEAN:
-          controller = <input type='checkbox' name={field.name} value={this.state[field.name]} onChange={this.handleChange} />;
-          break;
-
-        case FORM_FIELD_TYPES.TEXT:
-        default:
-          controller = <input type='text' name={field.name} value={this.state[field.name]} onChange={this.handleChange} />;
-      }
-      return <label key={field.name}>{field.name}{controller}</label>;
-    });
     return (
       <form className={styles.form} onSubmit={this.handleSubmit}>
-        {fieldList}
-        <Button variant="raised" color="primary">Save</Button>
+        {this.getFields()}
+        <Button className="submit-button" variant="raised" color="primary" onClick={this.handleSubmit}>Save</Button>
       </form>
     );
   }
+
+  getFields = () => {
+    return this.props.fields.map(field => {
+      let options;
+      switch (field.datagramValueType) {
+        case FORM_FIELD_TYPES.SELECT:
+          options = field.options.map(option => <option key={option} value={option}>{option}</option>);
+          return (
+            <Select key={field.name}
+              type='checkbox'
+              name={field.name}
+              value={this.state.formData[field.name]}
+              onChange={this.handleChange}
+              native={true}>
+              {options}
+            </Select>
+          );
+
+        case FORM_FIELD_TYPES.BOOLEAN:
+          return <label key={field.name}>
+            <Checkbox name={field.name}
+              value={this.state.formData[field.name]}
+              onChange={this.handleChange} />
+            {field.name}
+          </label>;
+
+        case FORM_FIELD_TYPES.TEXT:
+        default:
+          return <Input key={field.name}
+            type='text'
+            name={field.name}
+            placeholder={field.name}
+            value={this.state.formData[field.name]}
+            onChange={this.handleChange} />;
+      }
+    });
+  }
 }
 
-// connect store state to container
+// connect app state to container
 const mapStateToProps = state => ({ fields: state.form.fields });
-const mapDispatchToProps = dispatch => ({fetchForm: () => { dispatch(getData()); }});
+const mapDispatchToProps = dispatch => ({
+  fetchForm: () => { dispatch(getData()); },
+  sendFormData: (data) => { dispatch(send(data)); }
+});
 Form.propTypes = {
   fields: PropTypes.array.isRequired,
-  fetchForm: PropTypes.func.isRequired
+  fetchForm: PropTypes.func.isRequired,
+  sendFormData: PropTypes.func.isRequired
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Form);
