@@ -30,3 +30,13 @@ export function getData() {
 export function formLoaded(data) {
   return createAction(actionTypes.LOADED, data);
 }
+
+/**
+ * Sends collected form data
+ * @param {object} data
+ */
+export function send(data) {
+  return () => {
+    alert('Form data sent');
+  };
+}
